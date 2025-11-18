@@ -8,5 +8,6 @@ object Main extends ZIOAppDefault:
       // _ <- Effects.outrunCalcput
       // _ <- FirstServer.runServer
       // _ <- MyRoutes.runServ
-      _<- PathCodec.PathCodecExec
+      // _<- PathCodec.PathCodecExec
+      _<- BasicRestApiWithService.run
     } yield ()
