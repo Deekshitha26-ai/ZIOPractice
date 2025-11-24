@@ -17,5 +17,6 @@ lazy val root = project
     "dev.zio"    %% "zio"          % zio2Version,
     "dev.zio"    %% "zio-http"     % "3.0.1",
     "dev.zio"    %% "zio-json"     % "0.6.2",
+    "org.apache.pdfbox" % "pdfbox" % "2.0.30",
     )
   )
