@@ -7,14 +7,18 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDTextField
 import org.apache.pdfbox.pdmodel.common.PDRectangle
 
 object DocumentCreation {
+  // Create a new empty PDF document
+  val document = new PDDocument()
+  // Add a blank page
+  val page = new PDPage()
+  document.addPage(page)
+  //Adding Text box
+  //In PDFBox, a PDF document is structured like this:
+  // PDDocument → DocumentCatalog → AcroForm → Form Fields
+  val acroForm = new PDAcroForm(document)
+  document.getDocumentCatalog().setAcroForm(acroForm)
 
   def main(args: Array[String]): Unit = {
-    // Create a new empty PDF document
-    val document = new PDDocument()
-
-    // Add a blank page
-    val page = new PDPage()
-    document.addPage(page)
 
     val content = new PDPageContentStream(document, page)
 
@@ -26,28 +30,16 @@ object DocumentCreation {
     content.endText()
     content.close()
 
-    //Adding Text box
-    //In PDFBox, a PDF document is structured like this:
-    // PDDocument → DocumentCatalog → AcroForm → Form Fields
-    val acroForm = new PDAcroForm(document)
-    document.getDocumentCatalog().setAcroForm(acroForm)
+    // createTextField("myTextBox",100,720,200,20, "/F1 10 Tf 0 g")
+    // createTextField("myTextBox3",320,720,200,20, "/F1 10 Tf 0 g")
+    // createTextField("myTextBox2",100,750,200,20, "/F1 10 Tf 0 g")
 
-    // Creating a text field
-    val textField = new PDTextField(acroForm)
-    textField.setPartialName("inputBox")
-
-    //Postiton of the box(x,y,width,height)
-    val rect = new PDRectangle(100, 650,500,50)
-
-    val widget = textField.getWidgets.get(0)
-    widget.setRectangle(rect)
-    // TEXT SIZE
-    textField.setDefaultAppearance("/Helv 20 Tf 0 g") // font size = 14
-    widget.setPage(page)
-
-
-    // Add widget to page 
-    page.getAnnotations.add(widget)
+    val total_textFields = (1 to 20).toList
+    val height = 20
+    val gap = 2
+    total_textFields.map{t =>
+      createTextField(s"myTextBox$t",5, (height+gap)*(t), 200, height, "/F1 10 Tf 1 0 1 rg")
+    }
 
     //Add field to form 
     acroForm.getFields()
@@ -61,5 +53,20 @@ object DocumentCreation {
       document.close()
     }
   }
+  private def createTextField(name:String, xcoord:Int, ycoord:Int, width:Int, height:Int, daValue: String): Boolean = 
+    // Creating a text field
+    val textField = new PDTextField(acroForm)
+    textField.setPartialName(name)
 
+    //Postiton of the box(x,y,width,height)
+    val rect = new PDRectangle(xcoord,ycoord,width,height)
+
+    val widget = textField.getWidgets.get(0)
+    widget.setRectangle(rect)
+    // TEXT SIZE
+    textField.setDefaultAppearance(daValue) // font size = 14
+    widget.setPage(page)
+
+    // Add widget to page 
+    page.getAnnotations.add(widget)
 }
