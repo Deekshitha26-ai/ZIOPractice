@@ -1,61 +1,49 @@
-import org.apache.pdfbox.pdmodel.PDDocument //Lib required for loading the pdf 
+import zio.* 
+import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import java.io.ByteArrayOutputStream
-import java.nio.file.{Files, Paths} // Lib for getting the path of the file 
+import PdfFormData._ 
+import java.io.File
 
-// Define/Case class for the parameters involved in the pdf doc
-case class UserDetails(
-    fullName : String ,
-    email : String,
-    phoneNumber : String,
-    address : String 
-)
+object PdfService2{
+    // This function loads the pdf and fill the details and return the pdf as bytes
+    
+        def fillPdf(data:PdfFormData): ZIO[Any, Unit, File]={
+            //First get the pdf and load it 
+         ZIO.attempt{
+            val templatePath= "src/main/resources/templates/details_form.pdf"
+            val document = PDDocument.load(java.io.File(templatePath))
 
-// Creating a pdf service which can load the pdf 
-object PdfService {
+            try{
+                val acroform: PDAcroForm=
+                    Option(document.getDocumentCatalog.getAcroForm)
+                    .getOrElse(throw new IllegalStateException("No Acroform in the pdf"))
 
-    private val templateResourcePath  = "templates/details_form.pdf"
+                def assignVal(name: String, value: String ): Unit =
+                    Option(acroform.getField(name))
+                        .getOrElse(throw new IllegalStateException(s"Field '$name' not found"))
+                        .setValue(value)
 
-    // function to fill denerate the pdf document filled 
-    def genFilledPdf(details:UserDetails): Array[Byte]= {
-        // Loading the pdf document from the path it is saved in 
-        // PDDocument.load is the library 
-        val is = Option(
-            getClass.getClassLoader.getResourceAsStream(templateResourcePath)
-            ).getOrElse {
-            throw new RuntimeException(
-                s"Template PDF not found on classpath: $templateResourcePath"
-            )
-            }
+                //Assigning the values to the fields by calling the above helper functions
+                assignVal("Text1", data.fullName)
+                assignVal("Text2", data.email)
+                assignVal("Text3", data.phoneNumber)
+                assignVal("Text4", data.address)
 
-        val document = PDDocument.load(is)
-        
-        try {
-            //PDAcroForm is the interative fields of the pdf 
-            //The AcroForm maintains default:Font, Font size, Resources (fonts, colors), Form behavior (need appearances flag)
-            val acroform: PDAcroForm = 
-                Option(document.getDocumentCatalog.getAcroForm)
-                    .getOrElse(throw new IllegalStateException("No AcroForm in template"))
-                    
-             Option(acroform.getField("Full Name")).foreach(_.setValue(details.fullName))
-             Option(acroform.getField("Email")).foreach(_.setValue(details.email))
-             Option(acroform.getField("Phone Number")).foreach(_.setValue(details.phoneNumber))
-             Option(acroform.getField("Address")).foreach(_.setValue(details.address))  
+                acroform.flatten()
 
-            // This object stores the data in the memory not on the disk 
-            // So here this code is preparing a place to store the generated PDF bytes 
-             val baos = new ByteArrayOutputStream()
-             document.save(baos)
-             baos.toByteArray
-        } finally {
-            document.close
-        }
-             
-        }
-
-
+                val tmp = File.createTempFile("details_form_", ".pdf")
+                document.save(tmp)
+                tmp
+                } finally {
+                document.close()
+                }
+            }.mapError(_ => ()) 
+    }
 
     }
+
+
 
 
 

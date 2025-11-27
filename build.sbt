@@ -16,12 +16,12 @@ lazy val root = project
     "org.scalameta" %% "munit" % "1.0.0" % Test,
     "dev.zio"    %% "zio"          % zio2Version,
     "dev.zio"    %% "zio-http"     % "3.0.1",
-    "dev.zio"    %% "zio-json"     % "0.6.0",
+    "dev.zio"    %% "zio-json"     % "0.7.44",
     "org.apache.pdfbox" % "pdfbox" % "2.0.30",
     "com.softwaremill.sttp.tapir" %% "tapir-core"%"1.11.6",
     "com.softwaremill.sttp.tapir"%%"tapir-netty-server-sync"%"1.11.6",
-    "com.softwaremill.sttp.tapir" %% "tapir-zio-http-server" % "1.11.6"
-    
+    "com.softwaremill.sttp.tapir" %% "tapir-zio-http-server" % "1.11.6",
+    "com.softwaremill.sttp.tapir" %% "tapir-json-zio"        % "1.12.4"  
 
     )
   )

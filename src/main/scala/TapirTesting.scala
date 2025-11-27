@@ -12,8 +12,8 @@ object TapirTesting{
         .out(stringBody)
         .zServerLogic[Any]{_=>ZIO.succeed(s"Tapir Test successful")}
 
-val tapirRoutes: Routes[Any, Response] =
-    ZioHttpInterpreter().toHttp(testEndpoint)
+// val tapirRoutes: Routes[Any, Response] =
+//     ZioHttpInterpreter().toHttp(testEndpoint)
 }
 
 // package com.axiommd.webview.ZIO
