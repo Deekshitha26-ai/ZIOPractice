@@ -1,16 +1,18 @@
 import zio._
 import zio.http.Server
+import Routing.routes
 
 
 object Main extends ZIOAppDefault:
   override def run =
-    Server.serve(PdfRoutes.routes)
-      .provide(
-        Server.default
-      )
+    Server.serve(routes).provide(Server.default)
     // for {
-    //   // _ <- Calculator.output
-    //   // _ <- Effects.outrunCalcput
+    //   _<- Effects.zippResult
+    //   // _ <- Calculator.runCalc
+    //   // _ <- Effects.succResult
+    //   //  _<- Effects.attemptResult
+    //   // _<- Effects.failResult
+     
     //   // _ <- FirstServer.runServer
     //   // _ <- MyRoutes.runServ
     //   // _<- PathCodec.PathCodecExec

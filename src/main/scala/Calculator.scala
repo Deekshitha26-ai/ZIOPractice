@@ -7,28 +7,24 @@ case object DivisionByZero extends CalcError
 case object InvalidOperation extends CalcError
 
 object Calculator {
-  def add(a: Int, b: Int): IO[CalcError, Int] =
-    ZIO.succeed(a + b)
+  def add(a: Int, b: Int):  Task[Int]=
+    ZIO.attempt(a+b)
 
-  def subtract(a: Int, b: Int): IO[CalcError, Int] =
-    ZIO.succeed(a - b)
+  def subtract(a: Int, b: Int): Task[Int] =
+    ZIO.attempt(a - b)
 
-  def multiply(a: Int, b: Int): IO[CalcError, Int] =
-    ZIO.succeed(a * b)
+  def multiply(a: Int, b: Int): Task[Int] =
+    ZIO.attempt(a * b)
 
-  def divide(a: Int, b: Int): IO[CalcError, Int] =
-    if (b == 0) ZIO.fail(DivisionByZero)
-    else ZIO.succeed(a / b)
+  def divide(a: Int, b: Int): Task[Int]=
+    ZIO.attempt(a / b)
 
 
-  val calculation: IO[CalcError, Int] = for {
-  sum  <- Calculator.add(4, 5)
-  diff <- Calculator.subtract(sum, 2)
-  prod <- Calculator.multiply(diff, 3)
-               
+  val calculation: Task[Int] = for {
+  ans <- Calculator.add(4,0)
+
   }
- yield sum
-
+yield ans
 
   def runCalc = calculation.flatMap(result => Console.printLine(s"Result: $result"))
 }
