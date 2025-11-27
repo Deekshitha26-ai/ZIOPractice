@@ -24,10 +24,11 @@ object Routing{
                     Response.text(s"Hello $a your age is $x")
                     
         },
-        
+
         POST/"echo" -> Handler.fromFunctionZIO[Request] {
             (req: Request) =>
                 req.body.asString.map(Response.text(_))
         }.sandbox,
     )
+    
 }

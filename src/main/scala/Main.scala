@@ -1,11 +1,14 @@
-import zio._
+import zio.*
 import zio.http.Server
 import Routing.routes
+import TapirTesting.tapirRoutes
+// import TapirTesting
 
 
 object Main extends ZIOAppDefault:
   override def run =
-    Server.serve(routes).provide(Server.default)
+     
+    Server.serve(tapirRoutes).provide(Server.default)
     // for {
     //   _<- Effects.zippResult
     //   // _ <- Calculator.runCalc
